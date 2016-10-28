@@ -66,12 +66,14 @@ class Handler {
         }
 
         // No event header, so we bail again
+        var_dump($_SERVER);
         if (! $this->mainEvent = isset($_SERVER['HTTP_X_GITLAB_EVENT']) ? $_SERVER['HTTP_X_GITLAB_EVENT'] : false) {
             return;
         };
 
         // Attempt to decode the GitLab hook JSON. If invalid, bail
         $hook = json_decode($this->hook, true);
+        var_dump($hook);
         if (!$hook) {
             return;
         }
