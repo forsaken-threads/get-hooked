@@ -1,8 +1,8 @@
 <?php
 
-use ForsakenThreads\GetHooked\Handler;
+use ForsakenThreads\GetHooked\WebhookHandler;
 
 include "../../vendor/autoload.php";
 
-$handler = new Handler('ABC123');
+$handler = new WebhookHandler('ABC123');
 $handler->receiveHook();

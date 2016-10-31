@@ -16,7 +16,7 @@ class EventDelegationTest extends BaseTest {
     {
         /** @var Handler $handler */
         $rand = rand(1000,9999);
-        $json = ['object_kind' => 'on', 'rand' => $rand];
+        $json = ['object_kind' => 'push', 'rand' => $rand];
         $this->client->get('/event-delegation.php', json_encode($json))
             ->saveResponseHandler($handler);
         $this->assertEquals(json_encode($json) . json_encode($json), $handler->getFilteredResponse());

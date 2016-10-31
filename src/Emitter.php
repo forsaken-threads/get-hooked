@@ -12,7 +12,7 @@ class Emitter extends EventEmitter {
      *
      * @param callable $listener
      */
-    public function onAny(callable $listener)
+    public function onAny($listener)
     {
         $this->anyListeners[] = $listener;
     }

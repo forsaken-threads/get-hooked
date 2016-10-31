@@ -1,6 +1,6 @@
 <?php namespace ForsakenThreads\GetHooked;
 
-class Handler {
+class WebhookHandler {
 
     /**
      * @var bool Boolean that indicates if the GitLab secret was confirmed
@@ -42,7 +42,7 @@ class Handler {
 
         // Check for the token header from GitLab and determine if the request is authentic
         $token = isset($_SERVER['HTTP_X_GITLAB_TOKEN']) ? $_SERVER['HTTP_X_GITLAB_TOKEN'] : false;
-        $this->authenticated = $token && ($token == $secret);
+        $this->authenticated = $token && ($token === $secret);
     }
 
     public function on($event, callable $listener)
@@ -51,7 +51,7 @@ class Handler {
         return $this;
     }
 
-    public function onAny(callable $listener)
+    public function onAny($listener)
     {
         $this->dispatcher->onAny($listener);
         return $this;
@@ -70,7 +70,7 @@ class Handler {
             return;
         }
 
-        // No event header, so we bail again
+        // No event header, so we bail
         if (! $this->mainEvent = isset($_SERVER['HTTP_X_GITLAB_EVENT']) ? $_SERVER['HTTP_X_GITLAB_EVENT'] : false) {
             http_response_code(403);
             return;
