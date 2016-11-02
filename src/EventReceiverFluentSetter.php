@@ -178,11 +178,11 @@ trait EventReceiverFluentSetter {
             return false;
         }
 
-        if (!empty($this->event[GitLabHook::MERGE_REQUEST][GitLabHook::SOURCE_BRANCH]) && ($this->toBranch != $this->event[GitLabHook::MERGE_REQUEST][GitLabHook::SOURCE_BRANCH])) {
+        if (!empty($this->event[GitLabHook::MERGE_REQUEST][GitLabHook::SOURCE_BRANCH]) && ($this->fromBranch != $this->event[GitLabHook::MERGE_REQUEST][GitLabHook::SOURCE_BRANCH])) {
             return false;
         }
 
-        if (!empty($this->event[GitLabHook::OBJECT_ATTRIBUTES][GitLabHook::SOURCE_BRANCH]) && ($this->toBranch != $this->event[GitLabHook::OBJECT_ATTRIBUTES][GitLabHook::SOURCE_BRANCH])) {
+        if (!empty($this->event[GitLabHook::OBJECT_ATTRIBUTES][GitLabHook::SOURCE_BRANCH]) && ($this->fromBranch != $this->event[GitLabHook::OBJECT_ATTRIBUTES][GitLabHook::SOURCE_BRANCH])) {
             return false;
         }
 

@@ -4,6 +4,11 @@ use ForsakenThreads\GetHooked\DeployOnPush;
 
 class DeployOnPushTest extends DeployOnPush {
 
+    public function receive()
+    {
+        echo json_encode($this->event);
+    }
+
     public function reject()
     {
         echo json_encode(['rejected' => $this->event]);

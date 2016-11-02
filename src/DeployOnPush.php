@@ -21,6 +21,5 @@ class DeployOnPush {
      */
     public function receive()
     {
-        echo json_encode($this->event);
     }
 }

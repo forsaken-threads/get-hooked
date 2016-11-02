@@ -32,7 +32,6 @@ class FluentSetterTest extends BaseTest {
             ->saveResponseHandler($handler);
         $this->assertEquals($json, $handler->getFilteredResponse());
 
-        /** @var Handler $handler */
         $json = [GitLabHook::EVENT_TYPE => 'merge_request', 'rand' => rand(100, 999)];
         $this->client->get('/fluent-setters/on-push.php', json_encode($json))
             ->saveResponseHandler($handler);
@@ -52,9 +51,37 @@ class FluentSetterTest extends BaseTest {
             ->saveResponseHandler($handler);
         $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
 
-        /** @var Handler $handler */
         $json = [GitLabHook::EVENT_TYPE => 'push', 'rand' => rand(100, 999)];
         $this->client->get('/fluent-setters/on-push-for-repo.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+    }
+
+    public function testFluentSetterByUsernameCriterion()
+    {
+        /** @var Handler $handler */
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::USER => [GitLabHook::USER_NAME => 'testing-user'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-by-user.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals($json, $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::USER => [GitLabHook::USER_NAME => 'not-testing-user'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-by-user.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::USERNAME => 'testing-user', 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-by-user.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals($json, $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::USERNAME => 'not-testing-user', 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-by-user.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-by-user.php', json_encode($json))
             ->saveResponseHandler($handler);
         $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
     }
@@ -92,9 +119,57 @@ class FluentSetterTest extends BaseTest {
             ->saveResponseHandler($handler);
         $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
 
-        /** @var Handler $handler */
         $json = [GitLabHook::EVENT_TYPE => 'push', 'rand' => rand(100, 999)];
         $this->client->get('/fluent-setters/on-push-from-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+    }
+
+    public function testFluentSetterToBranchCriterion()
+    {
+        /** @var Handler $handler */
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::MERGE_REQUEST => [GitLabHook::TARGET_BRANCH => 'testing'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals($json, $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::MERGE_REQUEST => [GitLabHook::TARGET_BRANCH => 'not-testing'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::MERGE_REQUEST => [], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::OBJECT_ATTRIBUTES => [GitLabHook::TARGET_BRANCH => 'testing'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals($json, $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::OBJECT_ATTRIBUTES => [GitLabHook::TARGET_BRANCH => 'not-testing'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::OBJECT_ATTRIBUTES => [GitLabHook::PIPELINE_BRANCH => 'testing'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals($json, $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::OBJECT_ATTRIBUTES => [GitLabHook::PIPELINE_BRANCH => 'not-testing'], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', GitLabHook::OBJECT_ATTRIBUTES => [], 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
+            ->saveResponseHandler($handler);
+        $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
+
+        $json = [GitLabHook::EVENT_TYPE => 'push', 'rand' => rand(100, 999)];
+        $this->client->get('/fluent-setters/on-push-to-branch.php', json_encode($json))
             ->saveResponseHandler($handler);
         $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
     }
