@@ -1,5 +1,10 @@
 <?php namespace ForsakenThreads\GetHooked;
 
+use AdammBalogh\KeyValueStore\Adapter\FileAdapter;
+use AdammBalogh\KeyValueStore\KeyValueStore;
+use Flintstone\Flintstone;
+use Flintstone\FlintstoneDB;
+
 class WebhookHandler {
 
     /**
@@ -13,14 +18,14 @@ class WebhookHandler {
     protected $dispatcher;
 
     /**
-     * @var string The event contained in the `X-GitLab-Hook` header
-     */
-    protected $mainEvent;
-
-    /**
      * @var array The JSON request parsed into an array
      */
     protected $hook;
+
+    /**
+     * @var string The event contained in the `X-GitLab-Hook` header
+     */
+    protected $mainEvent;
 
     /**
      * @var string The webhook secret that authenticates the request
@@ -28,11 +33,17 @@ class WebhookHandler {
     protected $secret;
 
     /**
-     * Handler constructor, accepts the secret that authenticates the webhook from GitLab.
-     *
-     * @param $secret
+     * @var KeyValueStore
      */
-    public function __construct($secret)
+    protected $storage;
+
+    /**
+     * Handler constructor, accepts the secret that authenticates the webhook from GitLab and the directory path for the event database.
+     *
+     * @param string $secret
+     * @param string $storagePath
+     */
+    public function __construct($secret, $storagePath)
     {
         // This grabs the body of the request.  It can only be read once, so we do it here and save for later.
         $this->hook = file_get_contents('php://input');
@@ -43,6 +54,22 @@ class WebhookHandler {
         // Check for the token header from GitLab and determine if the request is authentic
         $token = isset($_SERVER['HTTP_X_GITLAB_TOKEN']) ? $_SERVER['HTTP_X_GITLAB_TOKEN'] : false;
         $this->authenticated = $token && ($token === $secret);
+
+        if ($this->authenticated) {
+            $storageClient = Flintstone::load('get-hooked', ['dir' => $storagePath]);
+            $this->storage = new KeyValueStore(new FileAdapter($storageClient));
+        }
+    }
+
+    /**
+     *
+     * Register an implementation of EventReceiverInterface
+     *
+     * @param EventReceiverInterface $receiver
+     */
+    public function addReceiver(EventReceiverInterface $receiver)
+    {
+        $this->onAny([$receiver, 'receive']);
     }
 
     public function on($event, callable $listener)

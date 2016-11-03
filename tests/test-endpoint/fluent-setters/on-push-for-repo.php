@@ -5,10 +5,10 @@ use ForsakenThreads\GetHooked\WebhookHandler;
 
 include "../../../vendor/autoload.php";
 
-$handler = new WebhookHandler('ABC123');
+$handler = new WebhookHandler('ABC123', __DIR__ . '/../../test-storage');
 
 $receiver = new DeployOnPushTest();
-$receiver->forRepo('testing/testing')
-    ->set($handler);
+$receiver->forRepo('testing/testing');
 
+$handler->addReceiver($receiver);
 $handler->receiveHook();

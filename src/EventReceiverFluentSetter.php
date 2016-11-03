@@ -1,8 +1,6 @@
 <?php namespace ForsakenThreads\GetHooked;
 
-use SebastianBergmann\Git\Git;
-
-trait EventReceiverFluentSetter {
+trait EventReceiverFluentSetter  {
 
     // Copy of a received event
     protected $event;
@@ -24,10 +22,10 @@ trait EventReceiverFluentSetter {
 
     /**
      *
-     * Receive the event and do something with it.
+     * Handle the received event.
      *
      */
-    abstract public function receive();
+    abstract public function handle();
 
     /**
      *
@@ -91,7 +89,7 @@ trait EventReceiverFluentSetter {
      * @param string $eventType
      * @param array $event
      */
-    public function matchEvent($eventType, $event)
+    public function receive($eventType, $event)
     {
         $this->event = $event;
 
@@ -102,7 +100,7 @@ trait EventReceiverFluentSetter {
             return;
         }
 
-        $this->receive();
+        $this->handle();
     }
 
     /**
@@ -117,17 +115,6 @@ trait EventReceiverFluentSetter {
     {
         $this->eventType = @(string) $eventType;
         return $this;
-    }
-
-    /**
-     *
-     * Set the receiver on the provided `$handler`
-     *
-     * @param WebhookHandler $handler
-     */
-    public function set(WebhookHandler $handler)
-    {
-        $handler->onAny([$this, 'matchEvent']);
     }
 
     /**

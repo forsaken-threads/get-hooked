@@ -5,9 +5,8 @@ use ForsakenThreads\GetHooked\WebhookHandler;
 
 include "../../../vendor/autoload.php";
 
-$handler = new WebhookHandler('ABC123');
+$handler = new WebhookHandler('ABC123', __DIR__ . '/../../test-storage');
 
-$receiver = new GenericEcho();
-$receiver->set($handler);
+$handler->addReceiver(new GenericEcho());
 
 $handler->receiveHook();

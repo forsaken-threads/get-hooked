@@ -4,7 +4,7 @@ use ForsakenThreads\GetHooked\DeployOnPush;
 
 class DeployOnPushTest extends DeployOnPush {
 
-    public function receive()
+    public function handle()
     {
         echo json_encode($this->event);
     }

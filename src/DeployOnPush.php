@@ -1,8 +1,10 @@
 <?php namespace ForsakenThreads\GetHooked;
 
-class DeployOnPush {
+class DeployOnPush implements CommandInterface, EventReceiverInterface {
 
     use EventReceiverFluentSetter;
+
+    protected $path;
 
     /**
      *
@@ -19,7 +21,18 @@ class DeployOnPush {
      * Receive the event and do something with it.
      *
      */
-    public function receive()
+    public function handle()
     {
+    }
+
+    /**
+     *
+     * Deploy the git repo at the given directory
+     *
+     * @param array $arguments
+     */
+    public function run(array $arguments)
+    {
+
     }
 }
