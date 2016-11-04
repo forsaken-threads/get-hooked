@@ -1,10 +1,5 @@
 <?php namespace ForsakenThreads\GetHooked;
 
-use AdammBalogh\KeyValueStore\Adapter\FileAdapter;
-use AdammBalogh\KeyValueStore\KeyValueStore;
-use Flintstone\Flintstone;
-use Flintstone\FlintstoneDB;
-
 class WebhookHandler {
 
     /**
@@ -33,12 +28,12 @@ class WebhookHandler {
     protected $secret;
 
     /**
-     * @var KeyValueStore
+     * @var QueueManager
      */
-    protected $storage;
+    protected $queue;
 
     /**
-     * Handler constructor, accepts the secret that authenticates the webhook from GitLab and the directory path for the event database.
+     * Handler constructor, accepts the secret that authenticates the webhook from GitLab and the directory path for the database.
      *
      * @param string $secret
      * @param string $storagePath
@@ -56,28 +51,50 @@ class WebhookHandler {
         $this->authenticated = $token && ($token === $secret);
 
         if ($this->authenticated) {
-            $storageClient = Flintstone::load('get-hooked', ['dir' => $storagePath]);
-            $this->storage = new KeyValueStore(new FileAdapter($storageClient));
+            $this->queue = new QueueManager($storagePath);
         }
     }
 
     /**
      *
-     * Register an implementation of EventReceiverInterface
+     * Register an implementation of `EventReceiverInterface`
+     *
+     * If the receiver also implements `QueueReceiverInterface`, it will get access to the Command Queue
      *
      * @param EventReceiverInterface $receiver
+     *
+     * @return $this
      */
     public function addReceiver(EventReceiverInterface $receiver)
     {
-        $this->onAny([$receiver, 'receive']);
+        if ($receiver instanceof QueueReceiverInterface) {
+            $receiver->setQueue($this->queue);
+        }
+        return $this->onAny([$receiver, 'receive']);
     }
 
+    /**
+     *
+     * Register a listener callback for a specific event
+     *
+     * @param $event
+     * @param callable $listener
+     *
+     * @return $this
+     */
     public function on($event, callable $listener)
     {
         $this->dispatcher->on($event, $listener);
         return $this;
     }
 
+    /**
+     *
+     * Register a listener callback for all events
+     *
+     * @param $listener
+     * @return $this
+     */
     public function onAny($listener)
     {
         $this->dispatcher->onAny($listener);
@@ -111,7 +128,7 @@ class WebhookHandler {
         }
 
         // without `object_kind` we don't know what kind of event to emit
-        if (! $event = $this->hook['object_kind']) {
+        if (! $event = @$this->hook['object_kind']) {
             http_response_code(422);
             return;
         }

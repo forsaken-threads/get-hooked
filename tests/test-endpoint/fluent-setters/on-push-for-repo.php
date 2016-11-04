@@ -7,7 +7,7 @@ include "../../../vendor/autoload.php";
 
 $handler = new WebhookHandler('ABC123', __DIR__ . '/../../test-storage');
 
-$receiver = new DeployOnPushTest();
+$receiver = new DeployOnPushTest(sys_get_temp_dir());
 $receiver->forRepo('testing/testing');
 
 $handler->addReceiver($receiver);

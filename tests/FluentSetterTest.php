@@ -1,7 +1,6 @@
 <?php namespace ForsakenThreads\GetHooked\Tests;
 
 use ForsakenThreads\GetHooked\GitLabHook;
-use SebastianBergmann\Git\Git;
 
 class FluentSetterTest extends BaseTest {
 

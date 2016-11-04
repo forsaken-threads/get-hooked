@@ -4,7 +4,7 @@ use Evenement\EventEmitter;
 
 class Emitter extends EventEmitter {
 
-    protected $anyListeners;
+    protected $anyListeners = [];
 
     /**
      *

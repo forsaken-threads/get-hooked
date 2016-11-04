@@ -1,2 +1,2 @@
 /vendor
-/tests/test-storage
+/tests/test-storage/*.dat
