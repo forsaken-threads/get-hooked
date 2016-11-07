@@ -67,7 +67,7 @@ class WebhookHandler {
      */
     public function addReceiver(EventReceiverInterface $receiver)
     {
-        if ($receiver instanceof QueueReceiverInterface) {
+        if ($this->authenticated && $receiver instanceof QueueReceiverInterface) {
             $receiver->setQueue($this->queue);
         }
         return $this->onAny([$receiver, 'receive']);
