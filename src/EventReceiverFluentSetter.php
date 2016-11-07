@@ -6,7 +6,7 @@ trait EventReceiverFluentSetter  {
     protected $event;
 
     // The GitLab event type, found in `object_kind` within the JSON hook
-    protected $eventType;
+    protected $eventType = false;
 
     // The secondarily related git branch for the event
     protected $fromBranch;
@@ -68,6 +68,18 @@ trait EventReceiverFluentSetter  {
         $this->fromBranch = @(string) $branch;
         return $this;
     }
+
+    /**
+     *
+     * Return the event type for which this receiver listens
+     *
+     * @return boolean|string
+     */
+    public function getEventType()
+    {
+        return $this->eventType;
+    }
+
     /**
      *
      * Apply username criterion to the setter
@@ -86,10 +98,13 @@ trait EventReceiverFluentSetter  {
      *
      * Called by the Event Emitter and will determine if the Event matches the set criteria
      *
-     * @param string $eventType
+     * The `$eventType` will only be populated if this receiver listens to all events.
+     * This is done by implementing the interface method `getEventType()` with a function that returns false.
+     *
      * @param array $event
+     * @param string $eventType
      */
-    public function receive($eventType, $event)
+    public function receive($event, $eventType = null)
     {
         $this->event = $event;
 

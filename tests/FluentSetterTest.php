@@ -46,6 +46,7 @@ class FluentSetterTest extends BaseTest {
         $json = [GitLabHook::EVENT_TYPE => 'merge_request', 'rand' => rand(100, 999)];
         $this->client->get('/fluent-setters/on-push.php', json_encode($json))
             ->saveResponseHandler($handler);
+        var_dump($handler->getFilteredResponse());
         $this->assertEquals(['rejected' => $json], $handler->getFilteredResponse());
     }
 

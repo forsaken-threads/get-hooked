@@ -31,7 +31,7 @@ class Emitter extends EventEmitter {
             // this looks weird, but in order to send the `on` listeners a single object,
             // the hook object is wrapped in an array. so for the `onAny` listeners to
             // receive the object in the same way, we have to unwrap it
-            call_user_func($listener, $event, $arguments[0]);
+            call_user_func($listener, $arguments[0], $event);
         }
         parent::emit($event, $arguments);
     }

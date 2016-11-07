@@ -4,9 +4,9 @@ use ForsakenThreads\GetHooked\DeployOnPush;
 
 class DeployOnPushTest extends DeployOnPush {
 
-    static public function run($path)
+    static public function run($payload)
     {
-        echo $path;
+        echo $payload;
     }
 
     public function handle()
