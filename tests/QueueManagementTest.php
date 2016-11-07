@@ -1,5 +1,6 @@
 <?php namespace ForsakenThreads\GetHooked\Tests;
 
+use Flintstone\Flintstone;
 use ForsakenThreads\GetHooked\QueueManager;
 use ForsakenThreads\GetHooked\Tests\EventReceivers\DeployOnPushTest;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,10 @@ class QueueManagementTest extends TestCase {
         parent::tearDown();
         foreach (glob(__DIR__ . '/test-storage/*.dat') as $store) {
             unlink($store);
+            $store = substr(strrchr($store, '/'), 1, -4);
+            Flintstone::unload($store);
         }
+        clearstatcache();
     }
 
     public function testSingleton()

@@ -121,7 +121,7 @@ class QueueManager {
      */
     protected function admin()
     {
-        return $this->getStore('admin, true');
+        return $this->getStore('admin', false);
     }
 
     /**

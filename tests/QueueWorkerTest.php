@@ -1,5 +1,6 @@
 <?php namespace ForsakenThreads\GetHooked\Tests;
 
+use Flintstone\Flintstone;
 use ForsakenThreads\GetHooked\QueueManager;
 use ForsakenThreads\GetHooked\QueueWorker;
 use ForsakenThreads\GetHooked\Tests\EventReceivers\DeployOnPushTest;
@@ -25,7 +26,10 @@ class QueueWorkerTest extends TestCase {
         parent::tearDown();
         foreach (glob(__DIR__ . '/test-storage/*.dat') as $store) {
             unlink($store);
+            $store = substr(strrchr($store, '/'), 1, -4);
+            Flintstone::unload($store);
         }
+        clearstatcache();
     }
 
     public function testSingleton()
@@ -42,6 +46,7 @@ class QueueWorkerTest extends TestCase {
         $this->manager->singleton(DeployOnPushTest::class, 'test1', $test1);
         $this->manager->singleton(DeployOnPushTest::class, 'test2', $test2);
         $this->manager->singleton(DeployOnPushTest::class, 'test3', $test3);
+
         ob_start();
         $this->worker->work();
         $output = ob_get_contents();

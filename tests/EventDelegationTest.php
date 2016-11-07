@@ -1,6 +1,19 @@
 <?php namespace ForsakenThreads\GetHooked\Tests;
 
+use Flintstone\Flintstone;
+
 class EventDelegationTest extends BaseTest {
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        foreach (glob(__DIR__ . '/test-storage/*.dat') as $store) {
+            unlink($store);
+            $store = substr(strrchr($store, '/'), 1, -4);
+            Flintstone::unload($store);
+        }
+        clearstatcache();
+    }
 
     public function testOnAnyDelegation()
     {

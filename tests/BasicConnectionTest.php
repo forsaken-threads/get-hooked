@@ -1,5 +1,6 @@
 <?php namespace ForsakenThreads\GetHooked\Tests;
 
+use Flintstone\Flintstone;
 use ForsakenThreads\Diplomatic\Client;
 use PHPUnit\Framework\TestCase;
 
@@ -11,6 +12,17 @@ class BasicConnectionTest extends TestCase {
     public function setUp()
     {
         $this->client = new Client('http://localhost:8888', new Handler());
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        foreach (glob(__DIR__ . '/test-storage/*.dat') as $store) {
+            unlink($store);
+            $store = substr(strrchr($store, '/'), 1, -4);
+            Flintstone::unload($store);
+        }
+        clearstatcache();
     }
 
     public function testUnauthorizedRequest()
