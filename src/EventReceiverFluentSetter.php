@@ -5,7 +5,7 @@ trait EventReceiverFluentSetter  {
     // Copy of a received event
     protected $event;
 
-    // The GitLab event type, found in `object_kind` within the JSON hook
+    // The GitLab event type, found in `object_kind` key within the JSON hook
     protected $eventType = false;
 
     // The secondarily related git branch for the event
@@ -29,21 +29,7 @@ trait EventReceiverFluentSetter  {
 
     /**
      *
-     * Apply about branch criterion to the setter
-     *
-     * @param $branch
-     *
-     * @return $this
-     */
-    public function about($branch)
-    {
-        $this->toBranch = @(string) $branch;
-        return $this;
-    }
-
-    /**
-     *
-     * Apply repository criterion to the setter
+     * Apply repository criterion to the setter, in vendor-name/project-name format
      *
      * @param $repo
      *
@@ -82,7 +68,7 @@ trait EventReceiverFluentSetter  {
 
     /**
      *
-     * Apply username criterion to the setter
+     * Apply username criterion to the setter, formatted as the formal name, e.g. 'Keith Freeman'
      *
      * @param $username
      *
@@ -193,6 +179,25 @@ trait EventReceiverFluentSetter  {
 
     /**
      *
+     * Checks if the repository criterion is matched
+     *
+     * @return bool
+     */
+    protected function filterOnRepo()
+    {
+        if ($this->repository &&
+            (
+                empty($this->event[GitLabHook::REPOSITORY][GitLabHook::REPOSITORY_NAME]) || ($this->repository != $this->event[GitLabHook::REPOSITORY][GitLabHook::REPOSITORY_NAME])
+            )
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *
      * Checks if the to branch criterion is matched
      *
      * @return bool
@@ -225,25 +230,6 @@ trait EventReceiverFluentSetter  {
         }
 
         if (!empty($this->event[GitLabHook::OBJECT_ATTRIBUTES][GitLabHook::PIPELINE_BRANCH]) && ($this->toBranch != $this->event[GitLabHook::OBJECT_ATTRIBUTES][GitLabHook::PIPELINE_BRANCH])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     *
-     * Checks if the repository criterion is matched
-     *
-     * @return bool
-     */
-    protected function filterOnRepo()
-    {
-        if ($this->repository &&
-            (
-                empty($this->event[GitLabHook::REPOSITORY][GitLabHook::REPOSITORY_NAME]) || ($this->repository != $this->event[GitLabHook::REPOSITORY][GitLabHook::REPOSITORY_NAME])
-            )
-        ) {
             return false;
         }
 

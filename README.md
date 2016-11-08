@@ -1,12 +1,14 @@
 ## Get Hooked
 
-### A simple-ish GitLab webhook handler
+### A simple-ish *GitLab* webhook handler
 
-This is something I threw together to auto-deploy some static sites whenever I pushed to a private GitLab repo.  It's extensible and has some neat features but is really just a quick hack.
+This is something I put together to auto-deploy some static sites whenever I pushed to a private *GitLab* repo.  It's extensible and has some neat features but is really just a quick hack.
 
 ### One part handler, one part queue
 
-Basically the webhook handler takes GitLab hooks and stores them in a local queue.  Then a locally run queue worker will pull them off the queue and respond to them at your leisure.  For example, if you get a flurry of pushes that need deployment to production, you probably don't want to pull down every change as it happens.  You can queue up that deployment and then do it once rather than responding to every trigger.
+Basically the webhook handler takes *GitLab* hooks and stores them in a local **Queue**.  Then a locally run **Queue Worker** will pull them off the **Queue** and you can respond to them at your leisure.  For example, if you get a flurry of pushes that need deployment to `production`, you probably don't want to pull down every change as it happens.  You can queue up that deployment and then do it once rather than responding to every trigger.
+
+Of course, you can also respond to hooks in real-time, or do a combination of both.
 
 ## Very basic setup
 
@@ -16,7 +18,7 @@ Basically the webhook handler takes GitLab hooks and stores them in a local queu
 
 ### The Webhook Handler
 
-Put this somewhere public that GitLab can hit.
+Put this somewhere public that *GitLab* can hit.
 
 ```
 <?php
@@ -46,7 +48,7 @@ $handler->addReceiver(new DeployOnPush('/path/to/repo'));
 $handler->receiveHook();
 ```
 
-Super easy, right?  This will respond to all `push` events from GitLab.  What if you wanted something a little more specific?  There's no need to deploy to `master` when there's a push to a different branch.  Event Receivers can be set fluently.  Here are some of the options:
+Super easy, right?  This will respond to all `push` events from *GitLab*.  What if you wanted something a little more specific?  There's no need to deploy to `master` when there's a push to a different branch.  **Event Receivers** can be set fluently.  Here are some of the options:
 
 ```
 <?php
@@ -57,7 +59,7 @@ $receiver->initiatedBy('Keith Freeman')
     ->forRepo('keithfreeman/forsaken-threads-website');
 ```
 
-Now the deployment will only occur when `Keith Freeman` pushes to the `master` branch on the `keithfreeman/forsaken-threads-website` repository.  All other events will be dropped.  Unless, of course, they are accepted by different Event Receivers.
+Now the deployment will only occur when `Keith Freeman` pushes to the `master` branch on the `keithfreeman/forsaken-threads-website` repository.  All other events will be dropped.  Unless, of course, they are accepted by different **Event Receivers**.
 
 ### The Queue Worker
 
@@ -83,8 +85,8 @@ Also super easy, right?  This will pull commands off the queue and work them.
 
 ### What else can it do?
 
-At the moment, not much.  In theory, one could add Event Receivers to respond to other event types.  I am totally for doing that if somebody really wants one.  The only other receiver I have written is `DeployOnMerge` which works a lot like `DeployOnPush`.  If you want a tad more control over, say, a GitLab-Slack integration, you could totally write a handful of receivers and do whatever you wanted.  If they have broad enough appeal, I could list them here, or even include them in the repo.  That's what open source is all about, anyway, isn't it?  Sharing solutions.
+At the moment, not much.  In theory, one could add **Event Receivers** to respond to other event types.  I am totally for doing that if somebody really wants one.  The only other receiver I have written is [`DeployOnMerge`](./src/DeployOnMerge.php) which works a lot like [`DeployOnPush`](./src/DeployOnPush.php) in the example above.  If you want a tad more control over, say, a *GitLab* => *Slack* integration, you could totally write a handful of receivers and do whatever you wanted.  If they have broad enough appeal, I could list them here, or even include them in the repo.  That's what open source is all about, anyway, isn't it?  Sharing solutions.
 
 ### For more info
 
-If you want to take a deeper dive, you can check out Event Receivers in depth [here](EventReceivers.md).  Or have a look at the SAMI docs [here](http://get-hooked.forsaken-threads.com).
+If you want to take a deeper dive, you can check out **Event Receivers** in depth [here](EventReceivers.md).  You can also see a bit more about the `DeployOnPush` and `DeployOnMerge` receivers [here](DeployReceivers.md), or have a look at the SAMI docs [here](http://get-hooked.forsaken-threads.com).

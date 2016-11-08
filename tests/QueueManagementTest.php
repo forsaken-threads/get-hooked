@@ -2,6 +2,7 @@
 
 use Flintstone\Flintstone;
 use ForsakenThreads\GetHooked\QueueManager;
+use ForsakenThreads\GetHooked\Tests\EventReceivers\AsyncLoggerTest;
 use ForsakenThreads\GetHooked\Tests\EventReceivers\DeployOnPushTest;
 use PHPUnit\Framework\TestCase;
 
@@ -25,6 +26,40 @@ class QueueManagementTest extends TestCase {
             Flintstone::unload($store);
         }
         clearstatcache();
+    }
+
+    public function testQueueUp()
+    {
+        $from = rand(0, 5);
+        $to = rand($from + 1, 10);
+        $test1 = range($from, $to);
+        $this->manager->queueUp(AsyncLoggerTest::class, $test1);
+        $active = $this->manager->getActiveQueues();
+        $this->assertEquals(1, count($active[AsyncLoggerTest::class]));
+
+        $from = rand(0, 5);
+        $to = rand($from + 1, 10);
+        $test2 = range($from, $to);
+        $this->manager->queueUp(AsyncLoggerTest::class, $test2);
+        $active = $this->manager->getActiveQueues();
+        $this->assertEquals(2, count($active[AsyncLoggerTest::class]));
+
+        $from = rand(0, 5);
+        $to = rand($from + 1, 10);
+        $test3 = range($from, $to);
+        $this->manager->queueUp(AsyncLoggerTest::class, $test3);
+        $active = $this->manager->getActiveQueues();
+        $this->assertEquals(3, count($active[AsyncLoggerTest::class]));
+
+        $tests = [$test1, $test2, $test3];
+        $test = 0;
+        foreach ($active as $workerClass => $references) {
+            foreach ($references as $reference) {
+                $item = $this->manager->getQueueItem($workerClass, $reference);
+                $this->assertEquals($tests[$test], $item);
+                $test++;
+            }
+        }
     }
 
     public function testSingleton()
@@ -54,6 +89,5 @@ class QueueManagementTest extends TestCase {
         $this->manager->singleton(DeployOnPushTest::class, 'abc-test', $test);
         $active = $this->manager->getActiveQueues();
         $this->assertEquals([DeployOnPushTest::class => ['abc-test', 'abc-test1']], $active);
-
     }
 }

@@ -79,6 +79,24 @@ class QueueManager {
 
     /**
      *
+     * Queue up a command for the specified worker.
+     *
+     * @param $workerClass
+     * @param $data
+     */
+    public function queueUp($workerClass, $data)
+    {
+        $this->registerQueue($workerClass);
+        $queued = $this->getStore($workerClass)->get('__queue');
+        do {
+            $reference = chr(rand(65, 90)) . rand(10, 100 + count($queued));
+        } while (in_array($reference, $queued));
+        $this->getStore($workerClass)->set($reference, $data);
+        $queued[] = $reference;
+        $this->getStore($workerClass)->set('__queue', $queued);
+    }
+    /**
+     *
      * Remove an item from a queue
      *
      * @param $workerClass
@@ -100,7 +118,7 @@ class QueueManager {
      *
      * @param $workerClass
      * @param $reference
-     * @param null $data
+     * @param mixed $data
      */
     public function singleton($workerClass, $reference, $data)
     {
