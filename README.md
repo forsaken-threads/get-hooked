@@ -20,7 +20,7 @@ Of course, you can also respond to hooks in real-time, or do a combination of bo
 
 Put this somewhere public that *GitLab* can hit.
 
-```
+```php
 <?php
 
 use ForsakenThreads\GetHooked\DeployOnPush;
@@ -50,7 +50,7 @@ $handler->receiveHook();
 
 Super easy, right?  This will respond to all `push` events from *GitLab*.  What if you wanted something a little more specific?  There's no need to deploy to `master` when there's a push to a different branch.  **Event Receivers** can be set fluently.  Here are some of the options:
 
-```
+```php
 <?php
 
 $receiver = new DeployOnPush('/path/to/repo');
@@ -65,13 +65,13 @@ Now the deployment will only occur when `Keith Freeman` pushes to the `master` b
 
 Put this somewhere logical and set up a `cron` job to run it as frequently as you like.
 
-```
+```php
 <?php
 
 use ForsakenThreads\GetHooked\QueueWorker;
 
 // Obviously use the path to your actual composer autoloader
-include 'vendor/autoload.php';
+include './vendor/autoload.php';
 
 // The argument is a directory path to a folder that can be used to store 
 // the queues.  It must be writable/readable by the web server and the queue worker.
