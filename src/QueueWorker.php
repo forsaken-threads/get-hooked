@@ -31,8 +31,10 @@ class QueueWorker {
         foreach ($queues as $workerClass => $items) {
             foreach ($items as $item) {
                 $payload = $this->queue->getQueueItem($workerClass, $item);
-                $workerClass::run($payload);
-                $this->queue->removeQueueItem($workerClass, $item);
+                $result = $workerClass::run($payload);
+                if ($result) {
+                    $this->queue->removeQueueItem($workerClass, $item);
+                }
             }
         }
     }

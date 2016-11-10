@@ -34,9 +34,11 @@ class DeployOnEvent implements CommandInterface, EventReceiverInterface, QueueRe
     static public function run($payload)
     {
         if (is_dir($payload['path'])) {
-            exec("cd {$payload['path']} && git pull {$payload['remote']} {$payload['branch']}");
+            $remote = escapeshellarg($payload['remote']);
+            $branch = escapeshellarg($payload['branch']);
+            exec("cd {$payload['path']} && git pull $remote $branch");
             foreach ($payload['postCommand'] as $command) {
-                exec($command);
+                exec(escapeshellcmd($command));
             }
         }
         return true;
@@ -63,13 +65,13 @@ class DeployOnEvent implements CommandInterface, EventReceiverInterface, QueueRe
 
         $this->toBranch = $branch;
 
-        $this->path = escapeshellarg($path);
-        $this->branch = escapeshellarg($branch);
-        $this->remote = escapeshellarg($remote);
+        $this->path = $path;
+        $this->branch = $branch;
+        $this->remote = $remote;
         if ($postCommand) {
             $postCommand = (array) $postCommand;
             foreach ($postCommand as $command) {
-                $this->postCommand[] = escapeshellcmd($command);
+                $this->postCommand[] = $command;
             }
         }
     }

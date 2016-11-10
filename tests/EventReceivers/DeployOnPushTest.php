@@ -7,6 +7,7 @@ class DeployOnPushTest extends DeployOnPush {
     static public function run($payload)
     {
         echo $payload;
+        return true;
     }
 
     public function handle()
