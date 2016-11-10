@@ -54,7 +54,7 @@ class AsyncLogger implements CommandInterface, EventReceiverInterface, QueueRece
      */
     public function handle()
     {
-        $this->queue->queueUp(self::class, json_encode($this->event, JSON_PRETTY_PRINT));
+        $this->queue->queueUp(self::class, ['logFilePath' => $this->logFilePath, 'json' => json_encode($this->event, JSON_PRETTY_PRINT)]);
     }
 
 }
