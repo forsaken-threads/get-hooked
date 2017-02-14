@@ -117,11 +117,12 @@ class QueueManager {
      * A single deployment catches up the repo and renders subsequent contemporaneous deployments unnecessary.
      *
      * @param $workerClass
-     * @param $reference
+     * @param string $reference
      * @param mixed $data
      */
     public function singleton($workerClass, $reference, $data)
     {
+        $reference = @(string) $reference;
         $this->registerQueue($workerClass);
         $this->getStore($workerClass)->set($reference, $data);
         $queued = $this->getStore($workerClass)->get('__queue');
